@@ -3,15 +3,14 @@ package com.example.test_lab_week_12
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
-import com.example.test_lab_week_12.model.Movie
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.snackbar.Snackbar
-import java.util.Calendar
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
+import com.example.test_lab_week_12.model.Movie
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -43,20 +42,13 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+
                 launch {
-                    movieViewModel.popularMovies.collect { popularMovies ->
-                        val currentYear =
-                            Calendar.getInstance().get(Calendar.YEAR).toString()
-
-                        val filtered = popularMovies
-                            .filter { movie ->
-                                movie.releaseDate?.startsWith(currentYear) == true
-                            }
-                            .sortedByDescending { it.popularity }
-
-                        movieAdapter.addMovies(filtered)
+                    movieViewModel.popularMovies.collect { movies ->
+                        movieAdapter.addMovies(movies)
                     }
                 }
+
                 launch {
                     movieViewModel.error.collect { error ->
                         if (error.isNotEmpty()) {

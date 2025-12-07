@@ -12,11 +12,10 @@ class MovieRepository(private val movieService: MovieService) {
     private val apiKey = "9e4b78023ccf118352e70d93fafc84d0"
 
     // fetch movies from the API
-    // this function returns a Flow of Movie objects
     fun fetchMovies(): Flow<List<Movie>> {
         return flow {
-            // emit the list of popular movies from the API
-            emit(movieService.getPopularMovies(apiKey).results)
-        }.flowOn(Dispatchers.IO)  // run on background thread
+            val response = movieService.getPopularMovies(apiKey)
+            emit(response.results)
+        }.flowOn(Dispatchers.IO)
     }
 }
